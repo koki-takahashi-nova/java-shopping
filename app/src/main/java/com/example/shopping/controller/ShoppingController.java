@@ -3,6 +3,7 @@ package com.example.shopping.controller;
 import com.example.shopping.entity.Customer;
 import com.example.shopping.entity.Product;
 import com.example.shopping.model.Cart;
+import java.util.List;
 import com.example.shopping.service.OrderService;
 import com.example.shopping.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,9 @@ public class ShoppingController {
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             Model model) {
-        model.addAttribute("products", productService.searchProducts(keyword, minPrice, maxPrice));
+        List<Product> products = productService.searchProducts(keyword, minPrice, maxPrice);
+        model.addAttribute("products", products);
+        model.addAttribute("resultCount", products.size());
         model.addAttribute("keyword", keyword);
         model.addAttribute("minPrice", minPrice);
         model.addAttribute("maxPrice", maxPrice);
@@ -96,7 +99,9 @@ public class ShoppingController {
     // 価格帯クイックフィルター: 10000円以下
     @GetMapping("/filter/low")
     public String filterLowPrice(Model model) {
-        model.addAttribute("products", productService.searchProducts(null, 0.0, LOW_PRICE_MAX));
+        List<Product> products = productService.searchProducts(null, 0.0, LOW_PRICE_MAX);
+        model.addAttribute("products", products);
+        model.addAttribute("resultCount", products.size());
         model.addAttribute("maxPrice", LOW_PRICE_MAX);
         return "index"; 
     }
@@ -104,7 +109,9 @@ public class ShoppingController {
     // 価格帯クイックフィルター: 10001円〜50000円
     @GetMapping("/filter/mid")
     public String filterMidPrice(Model model) {
-        model.addAttribute("products", productService.searchProducts(null, MID_PRICE_MIN, MID_PRICE_MAX));
+        List<Product> products = productService.searchProducts(null, MID_PRICE_MIN, MID_PRICE_MAX);
+        model.addAttribute("products", products);
+        model.addAttribute("resultCount", products.size());
         model.addAttribute("minPrice", MID_PRICE_MIN);
         model.addAttribute("maxPrice", MID_PRICE_MAX);
         return "index"; 
@@ -113,7 +120,9 @@ public class ShoppingController {
     // 価格帯クイックフィルター: 50001円以上
     @GetMapping("/filter/high")
     public String filterHighPrice(Model model) {
-        model.addAttribute("products", productService.searchProducts(null, HIGH_PRICE_MIN, null));
+        List<Product> products = productService.searchProducts(null, HIGH_PRICE_MIN, null);
+        model.addAttribute("products", products);
+        model.addAttribute("resultCount", products.size());
         model.addAttribute("minPrice", HIGH_PRICE_MIN);
         return "index"; 
     }

@@ -18,7 +18,38 @@
 
     <div class="container mt-4">
         <h1>商品一覧</h1>
-        
+
+        <form action="/search" method="get" class="mb-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="keyword" class="form-label">商品名キーワード</label>
+                    <input type="text" class="form-control" id="keyword" name="keyword"
+                           th:value="${keyword}" placeholder="キーワードを入力">
+                </div>
+                <div class="col-md-3">
+                    <label for="minPrice" class="form-label">最低価格（円）</label>
+                    <input type="number" class="form-control" id="minPrice" name="minPrice"
+                           th:value="${minPrice}" placeholder="下限なし" min="0">
+                </div>
+                <div class="col-md-3">
+                    <label for="maxPrice" class="form-label">最高価格（円）</label>
+                    <input type="number" class="form-control" id="maxPrice" name="maxPrice"
+                           th:value="${maxPrice}" placeholder="上限なし" min="0">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">検索</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- 価格帯クイックフィルターボタン --> 
+        <div class="mb-4">
+            <a href="/filter/low" class="btn btn-outline-secondary me-2">～10,000円</a>
+            <a href="/filter/mid" class="btn btn-outline-secondary me-2">10,001円～50,000円</a>
+            <a href="/filter/high" class="btn btn-outline-secondary me-2">50,001円～</a>
+            <a href="/" class="btn btn-outline-secondary">リセット</a>
+        </div>
+
         <div class="row">
             <div th:each="product : ${products}" class="col-md-4 mb-4">
                 <div class="card">

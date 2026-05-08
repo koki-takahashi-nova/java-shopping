@@ -1,0 +1,210 @@
+openapi: 3.0.3
+info:
+  title: Java Shopping API
+  description: オンラインショッピングアプリケーションのAPIエンドポイント仕様
+  version: 1.0.0
+
+paths:
+  /:
+    get:
+      summary: 商品一覧ページを表示する
+      description: 全商品を取得してトップページを返す
+      responses:
+        '200':
+          description: 商品一覧ページ (index テンプレート)
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /search:
+    get:
+      summary: 商品を検索する
+      description: キーワード・価格帯で商品を絞り込んで一覧表示する
+      parameters:
+        - name: keyword
+          in: query
+          required: false
+          description: 検索キーワード
+          schema:
+            type: string
+        - name: minPrice
+          in: query
+          required: false
+          description: 最低価格 (円)
+          schema:
+            type: number
+            format: double
+        - name: maxPrice
+          in: query
+          required: false
+          description: 最高価格 (円)
+          schema:
+            type: number
+            format: double
+      responses:
+        '200':
+          description: 検索結果を含む商品一覧ページ (index テンプレート)
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /category/{category}:
+    get:
+      summary: カテゴリ別に商品を表示する
+      parameters:
+        - name: category
+          in: path
+          required: true
+          description: 商品カテゴリ名
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 指定カテゴリの商品一覧ページ (index テンプレート)
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /cart:
+    get:
+      summary: カートの内容を表示する
+      responses:
+        '200':
+          description: カートページ (cart テンプレート)
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /cart/add/{id}:
+    post:
+      summary: 商品をカートに追加する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 追加する商品のID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '302':
+          description: カートページへリダイレクト (/cart)
+          headers:
+            Location:
+              schema:
+                type: string
+              example: /cart
+
+  /cart/remove/{id}:
+    post:
+      summary: カートから商品を削除する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 削除する商品のID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '302':
+          description: カートページへリダイレクト (/cart)
+          headers:
+            Location:
+              schema:
+                type: string
+              example: /cart
+
+  /checkout:
+    get:
+      summary: チェックアウトページを表示する
+      description: 購入者情報入力フォームとカート内容を表示する
+      responses:
+        '200':
+          description: チェックアウトページ (checkout テンプレート)
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /order:
+    post:
+      summary: 注文を確定する
+      description: 購入者情報を受け取り注文を作成し、カートをクリアする
+      requestBody:
+        required: true
+        description: 購入者情報 (フォームデータ)
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 購入者名
+                email:
+                  type: string
+                  format: email
+                  description: メールアドレス
+                address:
+                  type: string
+                  description: 配送先住所
+      responses:
+        '302':
+          description: 注文確認ページへリダイレクト (/order/confirmation)
+          headers:
+            Location:
+              schema:
+                type: string
+              example: /order/confirmation
+
+  /order/confirmation:
+    get:
+      summary: 注文確認ページを表示する
+      responses:
+        '200':
+          description: 注文完了ページ (orderConfirmation テンプレート)
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /filter/low:
+    get:
+      summary: 低価格帯 (10,000円以下) の商品を表示する
+      description: 価格が10,000円以下の商品を絞り込んで一覧表示する
+      responses:
+        '200':
+          description: 低価格帯商品一覧ページ (index テンプレート)
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /filter/mid:
+    get:
+      summary: 中価格帯 (10,001円〜50,000円) の商品を表示する
+      description: 価格が10,001円以上50,000円以下の商品を絞り込んで一覧表示する
+      responses:
+        '200':
+          description: 中価格帯商品一覧ページ (index テンプレート)
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /filter/high:
+    get:
+      summary: 高価格帯 (50,001円以上) の商品を表示する
+      description: 価格が50,001円以上の商品を絞り込んで一覧表示する
+      responses:
+        '200':
+          description: 高価格帯商品一覧ページ (index テンプレート)
+          content:
+            text/html:
+              schema:
+                type: string

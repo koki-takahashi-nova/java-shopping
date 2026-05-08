@@ -50,6 +50,11 @@
             <a href="/" class="btn btn-outline-secondary">リセット</a>
         </div>
 
+        <div th:if="${resultCount != null}" class="mb-3">
+            <p th:if="${resultCount == 0}" class="text-muted">条件に一致する商品が見つかりませんでした</p>
+            <p th:if="${resultCount > 0}" class="text-muted" th:text="${resultCount + '件見つかりました'}"></p>
+        </div>
+
         <div class="row">
             <div th:each="product : ${products}" class="col-md-4 mb-4">
                 <div class="card">

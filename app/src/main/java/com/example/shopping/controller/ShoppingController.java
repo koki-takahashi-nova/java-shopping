@@ -20,16 +20,36 @@ public class ShoppingController {
     
     @Autowired
     private Cart cart;
+
+    // クイックフィルター用の価格帯定数
+    private static final double LOW_PRICE_MAX = 10000.0;
+    private static final double MID_PRICE_MIN = 10001.0;
+    private static final double MID_PRICE_MAX = 50000.0;
+    private static final double HIGH_PRICE_MIN = 50001.0;    
     
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("products", productService.getAllProducts());
         return "index";
     }
-    
+
+    @GetMapping("/search")
+    public String searchProducts(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            Model model) {
+        model.addAttribute("products", productService.searchProducts(keyword, minPrice, maxPrice));
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
+        return "index";
+    }
+
     @GetMapping("/category/{category}")
     public String productsByCategory(@PathVariable String category, Model model) {
         model.addAttribute("products", productService.getProductsByCategory(category));
+        model.addAttribute("category", category);
         return "index";
     }
     
@@ -71,5 +91,30 @@ public class ShoppingController {
     @GetMapping("/order/confirmation")
     public String orderConfirmation() {
         return "orderConfirmation";
+    }
+
+    // 価格帯クイックフィルター: 10000円以下
+    @GetMapping("/filter/low")
+    public String filterLowPrice(Model model) {
+        model.addAttribute("products", productService.searchProducts(null, 0.0, LOW_PRICE_MAX));
+        model.addAttribute("maxPrice", LOW_PRICE_MAX);
+        return "index"; 
+    }
+
+    // 価格帯クイックフィルター: 10001円〜50000円
+    @GetMapping("/filter/mid")
+    public String filterMidPrice(Model model) {
+        model.addAttribute("products", productService.searchProducts(null, MID_PRICE_MIN, MID_PRICE_MAX));
+        model.addAttribute("minPrice", MID_PRICE_MIN);
+        model.addAttribute("maxPrice", MID_PRICE_MAX);
+        return "index"; 
+    }
+
+    // 価格帯クイックフィルター: 50001円以上
+    @GetMapping("/filter/high")
+    public String filterHighPrice(Model model) {
+        model.addAttribute("products", productService.searchProducts(null, HIGH_PRICE_MIN, null));
+        model.addAttribute("minPrice", HIGH_PRICE_MIN);
+        return "index"; 
     }
 } 
